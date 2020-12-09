@@ -6,13 +6,14 @@
 #define __JSMN_STREAM_H_
 
 #include <stddef.h>
+#include <stdbool.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 /* Determines the maximal nesting level of the JSON */
-#define JSMN_STREAM_MAX_DEPTH 32
+#define JSMN_STREAM_MAX_DEPTH 3
 /* Determines the maximal length a primitive or a string can have */
 #define JSMN_STREAM_BUFFER_SIZE 512
 
@@ -57,9 +58,9 @@ typedef struct {
 	void (* end_array_callback)(void *user_arg);
 	void (* start_object_callback)(void *user_arg);
 	void (* end_object_callback)(void *user_arg);
-	void (* object_key_callback)(const char *key, size_t key_length, void *user_arg);
-	void (* string_callback)(const char *value, size_t length, void *user_arg);
-	void (* primitive_callback)(const char *value, size_t length, void *user_arg);
+	void (* object_key_callback)(const char *key, size_t key_length, unsigned int key_idx, void *user_arg);
+	void (* string_callback)(const char *value, size_t length, unsigned int key_idx, void *user_arg);
+	void (* primitive_callback)(const char *value, size_t length, unsigned int key_idx, void *user_arg);
 } jsmn_stream_callbacks_t;
 
 /**
@@ -74,6 +75,8 @@ typedef struct {
 	char buffer[JSMN_STREAM_BUFFER_SIZE];
 	size_t buffer_size;
 	void *user_arg;
+	unsigned int key_idx;
+	bool valid;
 } jsmn_stream_parser;
 
 /**
