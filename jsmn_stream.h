@@ -13,7 +13,7 @@ extern "C" {
 #endif
 
 /* Determines the maximal nesting level of the JSON */
-#define JSMN_STREAM_MAX_DEPTH 3
+#define JSMN_STREAM_MAX_DEPTH 5
 /* Determines the maximal length a primitive or a string can have */
 #define JSMN_STREAM_BUFFER_SIZE 512
 
