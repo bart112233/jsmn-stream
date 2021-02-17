@@ -69,7 +69,7 @@ typedef struct {
  */
 typedef struct {
     jsmn_streamstate_t state;
-	jsmn_stream_callbacks_t callbacks; /* callbacks for parse events */
+	const jsmn_stream_callbacks_t* callbacks; /* callbacks for parse events */
 	jsmn_streamtype_t type_stack[JSMN_STREAM_MAX_DEPTH]; /* Stack for storing the type structure */
 	size_t stack_height;
 	char buffer[JSMN_STREAM_BUFFER_SIZE];
@@ -84,7 +84,7 @@ typedef struct {
  * argument that is passed to the callbacks.
  */
 void jsmn_stream_init(jsmn_stream_parser *parser,
-	jsmn_stream_callbacks_t *callbacks, void *user_arg);
+	const jsmn_stream_callbacks_t *callbacks, void *user_arg);
 
 /**
  * Run JSON parser. It incrementally parses a JSON string character by

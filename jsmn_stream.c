@@ -63,7 +63,7 @@ static int jsmn_stream_parse_primitive(jsmn_stream_parser *parser, char cin) {
 found:
 	parser->buffer[len - 1] = '\0';
 	if (parser->valid){
-		JSMN_STREAM_CALLBACK(parser->callbacks.primitive_callback, js, len - 1,
+		JSMN_STREAM_CALLBACK(parser->callbacks->primitive_callback, js, len - 1,
 			parser->key_idx, parser->user_arg);
 	}
 	parser->buffer_size = 0;
@@ -95,7 +95,7 @@ static int jsmn_stream_parse_string(jsmn_stream_parser *parser, char cin) {
 			}
 			if (parser->valid){
 				JSMN_STREAM_CALLBACK(jsmn_stream_stack_top(parser) == JSMN_STREAM_KEY ?
-					parser->callbacks.string_callback : parser->callbacks.object_key_callback,
+					parser->callbacks->string_callback : parser->callbacks->object_key_callback,
 					js, len - 1, parser->key_idx, parser->user_arg);
 			}
 			parser->buffer_size = 0;
@@ -151,11 +151,11 @@ int jsmn_stream_parse(jsmn_stream_parser *parser, char c) {
 				case '{': case '[':
 					if (c == '{') {
 						type = JSMN_STREAM_OBJECT;
-						JSMN_STREAM_CALLBACK(parser->callbacks.start_object_callback,
+						JSMN_STREAM_CALLBACK(parser->callbacks->start_object_callback,
 							parser->user_arg);
 					} else {
 						type = JSMN_STREAM_ARRAY;
-						JSMN_STREAM_CALLBACK(parser->callbacks.start_array_callback,
+						JSMN_STREAM_CALLBACK(parser->callbacks->start_array_callback,
 							parser->user_arg);
 					}
 					if (!jsmn_stream_stack_push(parser, type)) {
@@ -164,10 +164,10 @@ int jsmn_stream_parse(jsmn_stream_parser *parser, char c) {
 					break;
 				case '}': case ']':
 					if (c == '}') {
-						JSMN_STREAM_CALLBACK(parser->callbacks.end_object_callback,
+						JSMN_STREAM_CALLBACK(parser->callbacks->end_object_callback,
 							parser->user_arg);
 					} else {
-						JSMN_STREAM_CALLBACK(parser->callbacks.end_array_callback,
+						JSMN_STREAM_CALLBACK(parser->callbacks->end_array_callback,
 							parser->user_arg);
 					}
 					jsmn_stream_stack_pop(parser);
@@ -231,11 +231,11 @@ int jsmn_stream_parse(jsmn_stream_parser *parser, char c) {
  * available.
  */
 void jsmn_stream_init(jsmn_stream_parser *parser,
-	jsmn_stream_callbacks_t *callbacks, void *user_arg) {
+	const jsmn_stream_callbacks_t *callbacks, void *user_arg) {
 	parser->state = JSMN_STREAM_PARSING;
 	parser->stack_height = 0;
 	parser->buffer_size = 0;
-	parser->callbacks = *callbacks;
+	parser->callbacks = callbacks;
 	parser->user_arg = user_arg;
 	parser->key_idx = 0;
 	parser->valid = true;
